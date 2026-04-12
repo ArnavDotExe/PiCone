@@ -14,5 +14,5 @@ services:
       STREAM_CHUNK_SIZE: ${STREAM_CHUNK_SIZE:-524288}
     volumes:
       - ./data:/app/data
-      - /srv/omv/movies:/media/movies:ro
-      - /srv/omv/tv:/media/tv:ro
+      - ${HOST_MOVIES_DIR:-/home/pi/media/movies}:/media/movies:ro
+      - ${HOST_TV_DIR:-/home/pi/media/tv}:/media/tv:ro
