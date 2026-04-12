@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PiCone</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/app.js" defer></script>
+</head>
+<body class="page-home">
+    <div class="background-glow"></div>
+
+    <header class="app-header">
+        <div>
+            <p class="eyebrow">Local Network Streaming</p>
+            <h1>PiCone</h1>
+            <p class="subtitle">Minimal Plex-like media server for Raspberry Pi</p>
+        </div>
+
+        <div class="controls">
+            <input id="searchInput" type="search" placeholder="Search movies or episodes" autocomplete="off" />
+            <button id="refreshBtn" type="button">Refresh Library</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="panel">
+            <div class="panel-head">
+                <h2>Movies</h2>
+                <span id="moviesCount">0</span>
+            </div>
+            <div id="moviesGrid" class="media-grid"></div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-head">
+                <h2>TV Episodes</h2>
+                <span id="tvCount">0</span>
+            </div>
+            <div id="tvGrid" class="media-grid"></div>
+        </section>
+
+        <p id="statusLine" class="status-line">Loading library...</p>
+    </main>
+</body>
+</html>

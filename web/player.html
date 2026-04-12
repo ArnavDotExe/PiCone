@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PiCone Player</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/player.js" defer></script>
+</head>
+<body class="page-player">
+    <div class="background-glow"></div>
+
+    <header class="app-header compact">
+        <a class="back-link" href="/">Back to library</a>
+        <h1 id="playerTitle">Loading...</h1>
+    </header>
+
+    <main class="player-wrap">
+        <video id="videoPlayer" controls playsinline preload="metadata"></video>
+        <p id="playerStatus" class="status-line"></p>
+    </main>
+</body>
+</html>

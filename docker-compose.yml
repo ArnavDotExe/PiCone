@@ -1,0 +1,18 @@
+services:
+  picone:
+    build: .
+    container_name: picone
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      MEDIA_MOVIES_DIR: /media/movies
+      MEDIA_TV_DIR: /media/tv
+      CACHE_DIR: /app/data
+      TMDB_API_KEY: ${TMDB_API_KEY:-}
+      SCAN_INTERVAL_SECONDS: ${SCAN_INTERVAL_SECONDS:-300}
+      STREAM_CHUNK_SIZE: ${STREAM_CHUNK_SIZE:-524288}
+    volumes:
+      - ./data:/app/data
+      - /srv/omv/movies:/media/movies:ro
+      - /srv/omv/tv:/media/tv:ro
