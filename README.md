@@ -28,43 +28,6 @@ PiCone is a lightweight, self-hosted media server built for Raspberry Pi 3 (ARMv
 - `static/` CSS and JavaScript
 - `data/` JSON caches and playback history (mounted volume)
 
-## Run with Docker on Raspberry Pi 3
-
-No OMV is required. PiCone can run directly on Raspberry Pi OS with Docker.
-
-1. Install Docker and Docker Compose plugin:
-
-```bash
-curl -fsSL https://get.docker.com | sh
-sudo usermod -aG docker $USER
-newgrp docker
-```
-
-2. Copy this project to the Pi and open the project folder.
-3. Create your local media folders (or use your own existing paths):
-
-```bash
-mkdir -p /home/pi/media/movies /home/pi/media/tv
-```
-
-4. Set host media paths in `.env`:
-
-```bash
-HOST_MOVIES_DIR=/home/pi/media/movies
-HOST_TV_DIR=/home/pi/media/tv
-```
-
-5. Optionally add `TMDB_API_KEY` to `.env`.
-6. Start service:
-
-```bash
-docker compose up -d --build
-```
-
-7. Open in browser:
-
-- `http://<pi-ip>:8080`
-
 ## Run without Docker (systemd)
 
 This runs PiCone directly on Raspberry Pi OS using Python + systemd.
@@ -87,25 +50,38 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-4. Create media and cache folders (or use your own paths):
+4. Create `.env` from template and edit values:
+
+```bash
+cp .env.example .env
+```
+
+5. Configure `.env` (example):
+
+```bash
+MEDIA_MOVIES_DIR=/home/pi/media/movies
+MEDIA_TV_DIR=/home/pi/media/tv
+CACHE_DIR=/home/pi/PiCone/data
+TMDB_API_KEY=
+SCAN_INTERVAL_SECONDS=300
+STREAM_CHUNK_SIZE=524288
+```
+
+6. Create media and cache folders (or use your own paths):
 
 ```bash
 mkdir -p /home/pi/media/movies /home/pi/media/tv /home/pi/PiCone/data
 ```
 
-5. Test-run once from shell:
+7. Test-run once from shell:
 
 ```bash
 cd /home/pi/PiCone
-MEDIA_MOVIES_DIR=/home/pi/media/movies \
-MEDIA_TV_DIR=/home/pi/media/tv \
-CACHE_DIR=/home/pi/PiCone/data \
-SCAN_INTERVAL_SECONDS=300 \
-STREAM_CHUNK_SIZE=524288 \
-.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8080
+source .venv/bin/activate
+python -m app.main
 ```
 
-6. Create systemd service `/etc/systemd/system/picone.service`:
+8. Create systemd service `/etc/systemd/system/picone.service`:
 
 ```ini
 [Unit]
@@ -118,13 +94,8 @@ Type=simple
 User=pi
 Group=pi
 WorkingDirectory=/home/pi/PiCone
-Environment=MEDIA_MOVIES_DIR=/home/pi/media/movies
-Environment=MEDIA_TV_DIR=/home/pi/media/tv
-Environment=CACHE_DIR=/home/pi/PiCone/data
-Environment=TMDB_API_KEY=
-Environment=SCAN_INTERVAL_SECONDS=300
-Environment=STREAM_CHUNK_SIZE=524288
-ExecStart=/home/pi/PiCone/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8080
+EnvironmentFile=/home/pi/PiCone/.env
+ExecStart=/home/pi/PiCone/.venv/bin/python -m app.main
 Restart=always
 RestartSec=3
 
@@ -132,7 +103,7 @@ RestartSec=3
 WantedBy=multi-user.target
 ```
 
-7. Enable and start service:
+9. Enable and start service:
 
 ```bash
 sudo systemctl daemon-reload
@@ -140,18 +111,9 @@ sudo systemctl enable --now picone
 sudo systemctl status picone
 ```
 
-8. Open in browser:
+10. Open in browser:
 
 - `http://<pi-ip>:8080`
-
-## OMV Path Notes
-
-Typical OMV mount paths look like:
-
-- `/srv/dev-disk-by-uuid-.../Media/Movies`
-- `/srv/dev-disk-by-uuid-.../Media/TV`
-
-Set these in `.env` as `HOST_MOVIES_DIR` and `HOST_TV_DIR`.
 
 ## Performance Tips for Pi 3
 

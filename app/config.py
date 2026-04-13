@@ -1,12 +1,22 @@
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
+
 
 class Settings:
     def __init__(self) -> None:
-        self.media_movies_dir = Path(os.getenv("MEDIA_MOVIES_DIR", "/media/movies"))
-        self.media_tv_dir = Path(os.getenv("MEDIA_TV_DIR", "/media/tv"))
-        self.cache_dir = Path(os.getenv("CACHE_DIR", "/app/data"))
+        default_movies = BASE_DIR / "media" / "movies"
+        default_tv = BASE_DIR / "media" / "tv"
+        default_cache = BASE_DIR / "data"
+
+        self.media_movies_dir = Path(os.getenv("MEDIA_MOVIES_DIR", str(default_movies))).expanduser()
+        self.media_tv_dir = Path(os.getenv("MEDIA_TV_DIR", str(default_tv))).expanduser()
+        self.cache_dir = Path(os.getenv("CACHE_DIR", str(default_cache))).expanduser()
 
         self.tmdb_api_key = os.getenv("TMDB_API_KEY", "").strip() or None
 

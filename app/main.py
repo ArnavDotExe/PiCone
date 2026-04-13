@@ -140,3 +140,9 @@ def get_progress(media_id: str) -> dict:
 @app.post("/progress/{media_id}")
 def update_progress(media_id: str, payload: ProgressPayload) -> dict:
     return progress_store.set(media_id, payload.seconds)
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8080)
