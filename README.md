@@ -41,6 +41,13 @@ chmod +x install.sh
 ./install.sh
 ```
 
+If your apt repositories are managed externally (for example OMV) and already have
+Python installed, you can skip apt package installation:
+
+```bash
+SKIP_APT=1 ./install.sh
+```
+
 The script installs system packages, sets up `.venv`, installs Python dependencies,
 creates `.env` from `.env.example`, creates media/cache folders, and enables the
 `picone` systemd service.

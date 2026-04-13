@@ -4,6 +4,7 @@ set -euo pipefail
 SERVICE_NAME="picone"
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_USER="${SUDO_USER:-${USER}}"
+SKIP_APT="${SKIP_APT:-0}"
 
 if ! id "${APP_USER}" >/dev/null 2>&1; then
   echo "Error: user '${APP_USER}' does not exist."
@@ -48,6 +49,24 @@ else
   SUDO="sudo"
 fi
 
+check_runtime_deps() {
+  local missing=()
+
+  if ! command -v python3 >/dev/null 2>&1; then
+    missing+=("python3" "python3-venv" "python3-pip")
+  else
+    if ! python3 -m venv --help >/dev/null 2>&1; then
+      missing+=("python3-venv")
+    fi
+
+    if ! python3 -m pip --version >/dev/null 2>&1; then
+      missing+=("python3-pip")
+    fi
+  fi
+
+  printf '%s\n' "${missing[@]}"
+}
+
 set_env() {
   local key="$1"
   local value="$2"
@@ -64,9 +83,29 @@ set_env() {
   fi
 }
 
-echo "[1/7] Installing OS dependencies..."
-${SUDO} apt-get update
-${SUDO} apt-get install -y python3 python3-venv python3-pip
+echo "[1/7] Checking OS dependencies..."
+mapfile -t MISSING_DEPS < <(check_runtime_deps)
+
+if [[ ${#MISSING_DEPS[@]} -eq 0 ]]; then
+  echo "OS dependencies already installed."
+else
+  if [[ "${SKIP_APT}" == "1" ]]; then
+    echo "Error: missing OS packages: ${MISSING_DEPS[*]}"
+    echo "SKIP_APT=1 is set, so apt installation is disabled."
+    exit 1
+  fi
+
+  echo "Installing missing OS packages: ${MISSING_DEPS[*]}"
+  if ! ${SUDO} apt-get update; then
+    echo ""
+    echo "apt-get update failed."
+    echo "Your system likely has repository key or source issues."
+    echo "If Python is already installed, rerun with: SKIP_APT=1 ./install.sh"
+    exit 1
+  fi
+
+  ${SUDO} apt-get install -y "${MISSING_DEPS[@]}"
+fi
 
 echo "[2/7] Creating Python virtual environment..."
 if [[ ! -d "${APP_DIR}/.venv" ]]; then
