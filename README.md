@@ -48,9 +48,9 @@ Python installed, you can skip apt package installation:
 SKIP_APT=1 ./install.sh
 ```
 
-The script installs system packages, sets up `.venv`, installs Python dependencies,
-creates `.env` from `.env.example`, creates media/cache folders, and enables the
-`picone` systemd service.
+The script installs missing OS packages (`python3` and `python3-venv` when needed),
+bootstraps pip inside `.venv`, installs Python dependencies, creates `.env` from
+`.env.example`, creates media/cache folders, and enables the `picone` systemd service.
 
 1. Install system packages:
 

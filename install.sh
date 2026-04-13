@@ -53,14 +53,10 @@ check_runtime_deps() {
   local missing=()
 
   if ! command -v python3 >/dev/null 2>&1; then
-    missing+=("python3" "python3-venv" "python3-pip")
+    missing+=("python3" "python3-venv")
   else
     if ! python3 -m venv --help >/dev/null 2>&1; then
       missing+=("python3-venv")
-    fi
-
-    if ! python3 -m pip --version >/dev/null 2>&1; then
-      missing+=("python3-pip")
     fi
   fi
 
@@ -113,6 +109,10 @@ if [[ ! -d "${APP_DIR}/.venv" ]]; then
 fi
 
 echo "[3/7] Installing Python requirements..."
+if ! "${APP_DIR}/.venv/bin/python" -m pip --version >/dev/null 2>&1; then
+  "${APP_DIR}/.venv/bin/python" -m ensurepip --upgrade
+fi
+
 "${APP_DIR}/.venv/bin/python" -m pip install --upgrade pip
 "${APP_DIR}/.venv/bin/pip" install -r "${REQUIREMENTS_FILE}"
 
