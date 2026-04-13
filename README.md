@@ -32,6 +32,19 @@ PiCone is a lightweight, self-hosted media server built for Raspberry Pi 3 (ARMv
 
 This runs PiCone directly on Raspberry Pi OS using Python + systemd.
 
+### Automated install (recommended)
+
+From the project root, run:
+
+```bash
+chmod +x install.sh
+./install.sh
+```
+
+The script installs system packages, sets up `.venv`, installs Python dependencies,
+creates `.env` from `.env.example`, creates media/cache folders, and enables the
+`picone` systemd service.
+
 1. Install system packages:
 
 ```bash
